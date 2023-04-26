@@ -16,22 +16,22 @@ let persons = [
   {
     id: 1,
     name: "Arto Hellas",
-    number: "040-123456",
+    phone: "040-123456",
   },
   {
     id: 2,
     name: "Ada Lovelace",
-    number: "39-44-5323523",
+    phone: "39-44-5323523",
   },
   {
     id: 3,
     name: "Dan Abramov",
-    number: "12-43-234345",
+    phone: "12-43-234345",
   },
   {
     id: 4,
     name: "Mary Poppendieck",
-    number: "39-23-6423122",
+    phone: "39-23-6423122",
   },
 ];
 
@@ -71,7 +71,7 @@ app.delete("/api/persons/:id", (request, response) => {
   response.status(404).end();
   console.log("deleted");
 });
-//add a number
+//add a phone
 app.post("/api/persons", (request, response) => {
   const body = request.body;
   console.log(body);
@@ -80,9 +80,9 @@ app.post("/api/persons", (request, response) => {
       error: "name missing",
     });
   }
-  if (!body.number) {
+  if (!body.phone) {
     return response.status(400).json({
-      error: "number missing",
+      error: "phone missing",
     });
   }
 
@@ -94,7 +94,7 @@ app.post("/api/persons", (request, response) => {
     const person = {
       id: getRandomIntInclusive(0, 1000000000000),
       name: body.name,
-      number: body.number,
+      phone: body.phone,
     };
 
     persons = persons.concat(person);
