@@ -71,7 +71,7 @@ app.delete("/api/persons/:id", (request, response) => {
   response.status(204).end();
   console.log("deleted");
 });
-//add a phone
+//add a phonenumber
 app.post("/api/persons", (request, response) => {
   const body = request.body;
   console.log(body);
