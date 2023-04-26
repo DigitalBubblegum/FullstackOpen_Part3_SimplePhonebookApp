@@ -6,8 +6,11 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ui": "rm -rf build && cd F:/FullstackOpen/part2/2.6_2.7_2.8_2.9_2.10_2.11_2.12_2.13_2.14_2.15_2.16_2.17 && npm run build && cp -r build F:/FullstackOpen_Part3_SimplePhonebookApp",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   },
+  "proxy": "http://localhost:3001",
   "author": "",
   "license": "MIT",
   "dependencies": {
