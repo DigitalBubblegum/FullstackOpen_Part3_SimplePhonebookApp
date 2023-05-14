@@ -62,13 +62,13 @@ app.get("/api/persons", (request, response) => {
 });
 //view by id
 app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
-  if (person) {
+  PhoneNumber.findById(request.params.id).then(person=>{
     response.json(person);
-  } else {
+  }).catch(error =>{
+    console.log(error);
     response.status(404).send("<h1>404 not found</h1>").end();
   }
+    )
 });
 //delete by id
 app.delete("/api/persons/:id", (request, response) => {
@@ -81,31 +81,25 @@ app.delete("/api/persons/:id", (request, response) => {
 app.post("/api/persons", (request, response) => {
   const body = request.body;
   console.log(body);
-  if (!body.name) {
+  if (body.name===undefined) {
     return response.status(400).json({
       error: "name missing",
     });
   }
-  if (!body.phone) {
+  if (body.phone===undefined) {
     return response.status(400).json({
       error: "phone missing",
     });
   }
 
-  if (persons.map((person) => person.name).includes(body.name)) {
-    return response.status(400).json({
-      error: "name must be unique",
-    });
-  } else {
-    const person = {
-      id: getRandomIntInclusive(0, 1000000000000),
-      name: body.name,
-      phone: body.phone,
-    };
-
-    persons = persons.concat(person);
-    response.json(person);
-  }
+  const person = new PhoneNumber({
+    name: body.name,
+    phone: body.phone,
+  });
+  person.save().then((savedNote) => {
+    response.json(savedNote);
+    console.log("note saved successfully");
+  });
 });
 const PORT = process.env.PORT || 3001;
 app.listen(PORT);
