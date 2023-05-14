@@ -3,29 +3,11 @@ const express = require("express");
 var morgan = require("morgan");
 const app = express();
 ///mongoose definitions:
-const mongoose = require("mongoose");
-mongoose.set("strictQuery", false);
-const url = process.env.MONGODB_URI;
-console.log("connecting to", url);
-
-mongoose
-  .connect(url)
-  .then((result) => {
-    console.log("connected to MongoDB");
-  })
-  .catch((error) => {
-    console.log("error connecting to MongoDB:", error.message);
+  const PhoneNumber = require("./models/phonenumber")
+  //
+  morgan.token("mes", function getMes(request) {
+    return JSON.stringify(request.body);
   });
-
-  const phoneBookSchema = new mongoose.Schema({
-    name: String,
-    phone: String,
-  });
-  const PhoneNumber = mongoose.model("PhoneNumber", phoneBookSchema);
-//
-morgan.token("mes", function getMes(request) {
-  return JSON.stringify(request.body);
-});
 app.use(
   morgan(":method :url :status :response-time ms - :res[content-length] :mes")
 );
@@ -71,6 +53,7 @@ app.get("/info", (request, response) => {
     `<p>phonebook has info for ${length} people</p><br><p>${currDate}</p>`
   );
 });
+
 //view all
 app.get("/api/persons", (request, response) => {
   PhoneNumber.find({}).then(persons => {
