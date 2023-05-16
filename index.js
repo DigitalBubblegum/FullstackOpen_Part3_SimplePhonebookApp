@@ -15,35 +15,8 @@ app.use(express.json());
 const cors = require("cors");
 app.use(cors());
 app.use(express.static("build"));
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    phone: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    phone: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    phone: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    phone: "39-23-6423122",
-  },
-];
 
 //functions
-function getRandomIntInclusive(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
-}
 
 app.get("/info", (request, response) => {
   const length = persons.length;
@@ -72,10 +45,12 @@ app.get("/api/persons/:id", (request, response) => {
 });
 //delete by id
 app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  persons.filter((person) => person.id != id);
-  response.status(204).end();
+ PhoneNumber.findByIdAndRemove(request.params.id)
+ .then(result => {
   console.log("deleted");
+  response.status(204).end()
+ })
+ .catch(error => console.log(error.message))
 });
 //add a phonenumber
 app.post("/api/persons", (request, response) => {
