@@ -4,7 +4,16 @@ var morgan = require("morgan");
 const app = express();
 ///mongoose definitions:
   const PhoneNumber = require("./models/phonenumber")
-  //
+//
+const errorHandler = (error,request,response,next) =>{
+  console.log(error.message);
+  if(error.name === 'CastError'){
+    return response.status(400).send({error:'malformatted id'})
+  }
+}
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
   morgan.token("mes", function getMes(request) {
     return JSON.stringify(request.body);
   });
@@ -37,11 +46,7 @@ app.get("/api/persons", (request, response) => {
 app.get("/api/persons/:id", (request, response) => {
   PhoneNumber.findById(request.params.id).then(person=>{
     response.json(person);
-  }).catch(error =>{
-    console.log(error);
-    response.status(404).send("<h1>404 not found</h1>").end();
-  }
-    )
+  }).catch(error =>{(error) => next(error);})
 });
 //delete by id
 app.delete("/api/persons/:id", (request, response) => {
@@ -50,7 +55,7 @@ app.delete("/api/persons/:id", (request, response) => {
   console.log("deleted");
   response.status(204).end()
  })
- .catch(error => console.log(error.message))
+ .catch(error => next(error))
 });
 //add a phonenumber
 app.post("/api/persons", (request, response) => {
@@ -76,6 +81,8 @@ app.post("/api/persons", (request, response) => {
     console.log("note saved successfully");
   });
 });
+app.use(unknownEndpoint);
+app.use(errorHandler);
 const PORT = process.env.PORT || 3001;
 app.listen(PORT);
 console.log(`Server running on port ${PORT}`);
