@@ -81,6 +81,21 @@ app.post("/api/persons", (request, response) => {
     console.log("note saved successfully");
   });
 });
+app.put("/api/persons/:id",(request,response,next)=>{
+  const body = request.body
+  const person = {
+    name: body.name,
+    phone: body.phone,
+  }
+  PhoneNumber.findByIdAndUpdate(request.params.id,person,{new:true})
+  .then(updatedPerson => {
+    response.json(updatedPerson)
+    console.log('success');
+  })
+  .catch(error => next(error))
+})
+
+
 app.use(unknownEndpoint);
 app.use(errorHandler);
 const PORT = process.env.PORT || 3001;
