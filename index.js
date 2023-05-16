@@ -46,7 +46,7 @@ app.get("/api/persons", (request, response) => {
 app.get("/api/persons/:id", (request, response) => {
   PhoneNumber.findById(request.params.id).then(person=>{
     response.json(person);
-  }).catch(error =>{(error) => next(error);})
+  }).catch(error => next(error))
 });
 //delete by id
 app.delete("/api/persons/:id", (request, response) => {
@@ -57,7 +57,7 @@ app.delete("/api/persons/:id", (request, response) => {
  })
  .catch(error => next(error))
 });
-//add a phonenumber
+//add a phonenumber to DB
 app.post("/api/persons", (request, response) => {
   const body = request.body;
   console.log(body);
