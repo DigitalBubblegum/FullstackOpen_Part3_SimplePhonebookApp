@@ -7,8 +7,10 @@ const app = express();
 //
 const errorHandler = (error,request,response,next) =>{
   console.log(error.message);
-  if(error.name === 'CastError'){
-    return response.status(400).send({error:'malformatted id'})
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 }
 const unknownEndpoint = (request, response) => {
@@ -58,7 +60,7 @@ app.delete("/api/persons/:id", (request, response) => {
  .catch(error => next(error))
 });
 //add a phonenumber to DB
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response,next) => {
   const body = request.body;
   console.log(body);
   if (body.name===undefined) {
@@ -79,15 +81,13 @@ app.post("/api/persons", (request, response) => {
   person.save().then((savedNote) => {
     response.json(savedNote);
     console.log("note saved successfully");
-  });
+  }).catch(error=>next(error))
 });
+
 app.put("/api/persons/:id",(request,response,next)=>{
-  const body = request.body
-  const person = {
-    name: body.name,
-    phone: body.phone,
-  }
-  PhoneNumber.findByIdAndUpdate(request.params.id,person,{new:true})
+  const {name,phone} = request.body
+
+  PhoneNumber.findByIdAndUpdate(request.params.id,{name,phone},{new:true, runValidators: true, context: 'query'})
   .then(updatedPerson => {
     response.json(updatedPerson)
     console.log('success');
@@ -102,3 +102,4 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT);
 console.log(`Server running on port ${PORT}`);
 // console.log(JSON.stringify(persons));
+
